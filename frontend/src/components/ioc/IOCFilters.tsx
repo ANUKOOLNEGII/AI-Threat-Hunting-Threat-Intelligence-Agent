@@ -141,7 +141,7 @@ export const IOCFiltersToolbar: React.FC<IOCFiltersToolbarProps> = ({
             value={filters.type}
             onChange={(e) => dispatch(setFilter({ key: 'type', value: e.target.value as IOCType | 'all' }))}
             aria-label="Filter by IOC type"
-            className="appearance-none h-8 pl-3 pr-7 text-xs rounded-input border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-card text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-1 focus:ring-primary-blue cursor-pointer"
+            className="appearance-none h-10 pl-3 pr-8 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-card text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-blue/20 focus:border-primary-blue cursor-pointer transition-all"
           >
             {TYPES.map((t) => (
               <option key={t.value} value={t.value}>
@@ -149,7 +149,7 @@ export const IOCFiltersToolbar: React.FC<IOCFiltersToolbarProps> = ({
               </option>
             ))}
           </select>
-          <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-light-text-muted" aria-hidden="true" />
+          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-light-text-muted" aria-hidden="true" />
         </div>
 
         {/* Reputation */}
@@ -158,7 +158,7 @@ export const IOCFiltersToolbar: React.FC<IOCFiltersToolbarProps> = ({
             value={filters.reputation}
             onChange={(e) => dispatch(setFilter({ key: 'reputation', value: e.target.value as IOCReputation | 'all' }))}
             aria-label="Filter by reputation"
-            className="appearance-none h-8 pl-3 pr-7 text-xs rounded-input border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-card text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-1 focus:ring-primary-blue cursor-pointer"
+            className="appearance-none h-10 pl-3 pr-8 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-card text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-blue/20 focus:border-primary-blue cursor-pointer transition-all"
           >
             {REPUTATIONS.map((r) => (
               <option key={r.value} value={r.value}>
@@ -166,7 +166,7 @@ export const IOCFiltersToolbar: React.FC<IOCFiltersToolbarProps> = ({
               </option>
             ))}
           </select>
-          <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-light-text-muted" aria-hidden="true" />
+          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-light-text-muted" aria-hidden="true" />
         </div>
 
         {/* Status */}
@@ -175,7 +175,7 @@ export const IOCFiltersToolbar: React.FC<IOCFiltersToolbarProps> = ({
             value={filters.status}
             onChange={(e) => dispatch(setFilter({ key: 'status', value: e.target.value as IOCStatus | 'all' }))}
             aria-label="Filter by status"
-            className="appearance-none h-8 pl-3 pr-7 text-xs rounded-input border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-card text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-1 focus:ring-primary-blue cursor-pointer"
+            className="appearance-none h-10 pl-3 pr-8 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-card text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-blue/20 focus:border-primary-blue cursor-pointer transition-all"
           >
             {STATUSES.map((s) => (
               <option key={s.value} value={s.value}>
@@ -183,7 +183,7 @@ export const IOCFiltersToolbar: React.FC<IOCFiltersToolbarProps> = ({
               </option>
             ))}
           </select>
-          <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-light-text-muted" aria-hidden="true" />
+          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-light-text-muted" aria-hidden="true" />
         </div>
       </div>
 

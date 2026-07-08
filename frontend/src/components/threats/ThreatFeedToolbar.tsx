@@ -65,7 +65,7 @@ function SelectFilter<T extends string>({
         value={value}
         onChange={(e) => onChange(e.target.value as T)}
         aria-label={ariaLabel}
-        className="appearance-none h-8 pl-3 pr-7 text-xs rounded-input border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-card text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-1 focus:ring-primary-blue cursor-pointer"
+        className="appearance-none h-10 pl-3 pr-8 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-card text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-blue/20 focus:border-primary-blue cursor-pointer transition-all"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -74,7 +74,7 @@ function SelectFilter<T extends string>({
         ))}
       </select>
       <ChevronDown
-        className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-light-text-muted"
+        className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-light-text-muted"
         aria-hidden="true"
       />
     </div>

@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Tooltip } from '../ui/Overlays';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
-import { toggleSidebar } from '../../redux/slices/uiSlice';
+import { toggleMobileMenu } from '../../redux/slices/uiSlice';
 import { useAuth } from '../../contexts/AuthContext';
 import {
   LayoutDashboard,
@@ -22,8 +21,6 @@ import {
   User,
   Settings as SettingsIcon,
   LogOut,
-  ChevronLeft,
-  ChevronRight,
   Shield as ShieldIcon,
   Cpu,
 } from 'lucide-react';
@@ -36,11 +33,13 @@ interface SidebarItem {
   roles?: Array<'admin' | 'analyst' | 'viewer'>;
 }
 
+// Enterprise optimized fixed width: 270px
+const SIDEBAR_WIDTH = 'w-[270px]';
+
 export const Sidebar: React.FC = () => {
   const dispatch = useAppDispatch();
-  const collapsed = useAppSelector((state) => state.ui.sidebarCollapsed);
+  const mobileMenuOpen = useAppSelector((state) => state.ui.mobileMenuOpen);
   const { hasRole, logout } = useAuth();
-  const [searchQuery, setSearchQuery] = useState('');
 
   const menuItems: SidebarItem[] = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
@@ -68,110 +67,123 @@ export const Sidebar: React.FC = () => {
     { name: 'Audit Logs', path: '/audit-logs', icon: FileText, roles: ['admin'] },
   ];
 
-  // Filter items based on user role and search query
   const filteredItems = menuItems.filter((item) => {
-    const roleAllowed = !item.roles || hasRole(item.roles);
-    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return roleAllowed && matchesSearch;
+    return !item.roles || hasRole(item.roles);
   });
 
   return (
-    <aside
-      aria-label="Sidebar Navigation"
-      className={`fixed inset-y-0 left-0 z-30 flex flex-col border-r border-gray-200 dark:border-gray-800 bg-light-bg-secondary dark:bg-dark-bg-secondary text-light-text-primary dark:text-dark-text-primary transition-all duration-300 ${
-        collapsed ? 'w-16' : 'w-64'
-      } lg:static`}
-    >
-      {/* Brand area */}
-      <div className="flex h-16 items-center justify-between px-4 border-b border-gray-200 dark:border-gray-800">
-        {!collapsed && (
-          <span className="font-sans text-base font-bold tracking-wider text-primary-blue dark:text-primary-sky">
-            AEGIS MONITOR
-          </span>
-        )}
-        <button
-          onClick={() => dispatch(toggleSidebar())}
-          className="flex h-8 w-8 items-center justify-center rounded-button hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-        </button>
-      </div>
-
-      {/* Search box (only when expanded) */}
-      {!collapsed && (
-        <div className="p-3">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-light-text-muted dark:text-dark-text-muted" />
-            <input
-              type="text"
-              placeholder="Search navigation..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 text-xs rounded-input bg-white dark:bg-dark-bg-primary border border-gray-200 dark:border-gray-800 focus:outline-none focus:ring-1 focus:ring-primary-blue"
-            />
-          </div>
-        </div>
+    <>
+      {/* Mobile Sidebar overlay backdrop — shown on mobile/tablet when sidebar drawer is active */}
+      {mobileMenuOpen && (
+        <div
+          onClick={() => dispatch(toggleMobileMenu())}
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          aria-hidden="true"
+        />
       )}
 
-      {/* Navigation menu list */}
-      <nav className="flex-1 space-y-1 overflow-y-auto px-2 py-3 no-scrollbar">
-        {filteredItems.map((item) => {
-          const Icon = item.icon;
-          const navLink = (
-            <NavLink
-              to={item.path}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-button transition-colors ${
-                  isActive
-                    ? 'bg-primary-blue text-white'
-                    : 'hover:bg-gray-200 dark:hover:bg-gray-800 text-light-text-secondary dark:text-dark-text-secondary'
-                }`
-              }
-            >
-              <Icon className="h-5 w-5 shrink-0" />
-              {!collapsed && <span className="truncate">{item.name}</span>}
-              {!collapsed && item.badge && (
-                <span className={`ml-auto text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
-                  item.badge === 'New' 
-                    ? 'bg-severity-low/20 text-severity-low' 
-                    : item.badge === 'AI' 
-                    ? 'bg-primary-sky/20 text-primary-sky' 
-                    : 'bg-primary-blue/20 text-primary-blue'
-                }`}>
-                  {item.badge}
-                </span>
-              )}
-            </NavLink>
-          );
-
-          if (collapsed) {
-            return (
-              <Tooltip key={item.path} content={item.name} position="right">
-                {navLink}
-              </Tooltip>
-            );
-          }
-
-          return (
-            <div key={item.path}>
-              {navLink}
-            </div>
-          );
-        })}
-      </nav>
-
-      {/* Sidebar Footer (Logout) */}
-      <div className="p-2 border-t border-gray-200 dark:border-gray-800">
-        <button
-          onClick={logout}
-          className="flex w-full items-center gap-3 px-3 py-2 text-sm font-medium text-severity-critical rounded-button hover:bg-severity-critical/10 transition-colors"
-          aria-label="Logout"
+      <aside
+        aria-label="Sidebar Navigation"
+        className={`
+          fixed inset-y-0 left-0 z-50
+          flex flex-col
+          border-r border-gray-200 dark:border-gray-800
+          bg-light-bg-secondary dark:bg-dark-bg-secondary
+          text-light-text-primary dark:text-dark-text-primary
+          transition-transform duration-300 ease-in-out
+          transform lg:transform-none lg:relative lg:inset-auto lg:z-auto
+          ${SIDEBAR_WIDTH}
+          ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        `}
+      >
+        {/* ─── Brand / Logo Area ─────────────────────────────────────── */}
+        <div
+          className="
+            flex flex-none min-h-[72px] sm:min-h-[80px] items-center border-b
+            border-gray-200 dark:border-gray-800
+            bg-white/95 dark:bg-dark-bg-secondary/95 backdrop-blur-xl
+            px-4 justify-between
+          "
         >
-          <LogOut className="h-5 w-5 shrink-0" />
-          {!collapsed && <span>Logout</span>}
-        </button>
-      </div>
-    </aside>
+          <div className="flex items-center gap-3 min-w-0">
+            <ShieldIcon className="h-6 w-6 text-primary-blue dark:text-primary-sky flex-none" />
+            <span className="font-sans text-[15px] font-bold tracking-widest text-primary-blue dark:text-primary-sky whitespace-nowrap select-none">
+              AEGIS MONITOR
+            </span>
+          </div>
+        </div>
+
+        {/* ─── Navigation Menu List ───────────────────────────────────── */}
+        <nav
+          className="flex-1 overflow-y-auto no-scrollbar py-3 px-3"
+          aria-label="Primary Navigation"
+        >
+          <ul className="space-y-1.5 list-none m-0 p-0">
+            {filteredItems.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <li key={item.path}>
+                  <NavLink
+                    to={item.path}
+                    onClick={() => {
+                      if (mobileMenuOpen) {
+                        dispatch(toggleMobileMenu());
+                      }
+                    }}
+                    className={({ isActive }) =>
+                      `
+                      flex items-center rounded-lg
+                      transition-colors duration-150
+                      gap-3 px-3 py-2 w-full min-h-[40px]
+                      ${isActive
+                        ? 'bg-primary-blue text-white shadow-sm'
+                        : 'text-light-text-secondary dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-light-text-primary dark:hover:text-dark-text-primary'
+                      }
+                      `
+                    }
+                  >
+                    <Icon className="h-5 w-5 shrink-0" />
+                    <span className="flex-1 text-sm font-medium truncate">{item.name}</span>
+                    {item.badge && (
+                      <span
+                        className={`
+                          ml-auto text-[10px] px-1.5 py-0.5 rounded-full font-bold leading-none shrink-0
+                          ${item.badge === 'New'
+                            ? 'bg-severity-low/20 text-severity-low'
+                            : item.badge === 'AI'
+                            ? 'bg-primary-sky/20 text-primary-sky'
+                            : 'bg-primary-blue/20 text-primary-blue'
+                          }
+                        `}
+                      >
+                        {item.badge}
+                      </span>
+                    )}
+                  </NavLink>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        {/* ─── Sidebar Footer / Logout ────────────────────────────────── */}
+        <div className="flex-none border-t border-gray-200 dark:border-gray-800 px-3 py-3">
+          <button
+            onClick={logout}
+            className="
+              flex w-full items-center min-h-[40px] rounded-lg
+              text-sm font-medium text-severity-critical
+              hover:bg-severity-critical/10 transition-colors
+              gap-3 px-3 py-2
+            "
+            aria-label="Logout"
+          >
+            <LogOut className="h-5 w-5 shrink-0" />
+            <span className="truncate">Logout</span>
+          </button>
+        </div>
+      </aside>
+    </>
   );
 };

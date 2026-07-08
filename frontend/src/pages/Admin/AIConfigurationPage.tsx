@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Sliders, Cpu, Save, RefreshCw } from 'lucide-react';
+import { Sliders, Cpu, Save, RefreshCw, ChevronDown } from 'lucide-react';
 import { adminService } from '../../services/admin.service';
 import type { AIConfig } from '../../types/admin.types';
 import { PageHeader } from '../../components/ui/States';
@@ -78,33 +78,39 @@ export const AIConfigurationPage: React.FC = () => {
                 <label htmlFor="ai-provider" className="text-[10px] font-black uppercase tracking-wider text-light-text-muted">
                   Model Provider
                 </label>
-                <select
-                  id="ai-provider"
-                  value={config.provider}
-                  onChange={(e) => setConfig({ ...config, provider: e.target.value })}
-                  className="w-full px-3 py-2 text-xs rounded-input border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-field text-light-text-primary dark:text-dark-text-primary focus:outline-none"
-                >
-                  <option value="gemini">Google Cloud Vertex AI</option>
-                  <option value="openai">OpenAI Enterprise</option>
-                  <option value="anthropic">Anthropic Claude</option>
-                </select>
+                <div className="relative">
+                  <select
+                    id="ai-provider"
+                    value={config.provider}
+                    onChange={(e) => setConfig({ ...config, provider: e.target.value })}
+                    className="w-full h-10 appearance-none pl-3 pr-8 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-field text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-blue/20 focus:border-primary-blue transition-all"
+                  >
+                    <option value="gemini">Google Cloud Vertex AI</option>
+                    <option value="openai">OpenAI Enterprise</option>
+                    <option value="anthropic">Anthropic Claude</option>
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-light-text-muted" aria-hidden="true" />
+                </div>
               </div>
 
               <div className="space-y-1">
                 <label htmlFor="ai-model" className="text-[10px] font-black uppercase tracking-wider text-light-text-muted">
                   Active Model
                 </label>
-                <select
-                  id="ai-model"
-                  value={config.model}
-                  onChange={(e) => setConfig({ ...config, model: e.target.value })}
-                  className="w-full px-3 py-2 text-xs rounded-input border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-field text-light-text-primary dark:text-dark-text-primary focus:outline-none"
-                >
-                  <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-                  <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-                  <option value="gpt-4o">GPT-4o (Standard)</option>
-                  <option value="claude-3-5-sonnet">Claude 3.5 Sonnet</option>
-                </select>
+                <div className="relative">
+                  <select
+                    id="ai-model"
+                    value={config.model}
+                    onChange={(e) => setConfig({ ...config, model: e.target.value })}
+                    className="w-full h-10 appearance-none pl-3 pr-8 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-field text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-blue/20 focus:border-primary-blue transition-all"
+                  >
+                    <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                    <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                    <option value="gpt-4o">GPT-4o (Standard)</option>
+                    <option value="claude-3-5-sonnet">Claude 3.5 Sonnet</option>
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-light-text-muted" aria-hidden="true" />
+                </div>
               </div>
             </div>
           </div>

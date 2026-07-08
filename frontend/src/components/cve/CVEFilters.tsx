@@ -141,7 +141,7 @@ export const CVEFiltersToolbar: React.FC<CVEFiltersToolbarProps> = ({
             value={filters.severity}
             onChange={(e) => dispatch(setFilter({ key: 'severity', value: e.target.value as CVESeverity | 'all' }))}
             aria-label="Filter by severity"
-            className="appearance-none h-8 pl-3 pr-7 text-xs rounded-input border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-card text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-1 focus:ring-primary-blue cursor-pointer"
+            className="appearance-none h-10 pl-3 pr-8 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-card text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-blue/20 focus:border-primary-blue cursor-pointer transition-all"
           >
             {SEVERITIES.map((s) => (
               <option key={s.value.toString()} value={s.value.toString()}>
@@ -149,7 +149,7 @@ export const CVEFiltersToolbar: React.FC<CVEFiltersToolbarProps> = ({
               </option>
             ))}
           </select>
-          <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-light-text-muted" aria-hidden="true" />
+          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-light-text-muted" aria-hidden="true" />
         </div>
 
         {/* Exploited Status */}
@@ -161,7 +161,7 @@ export const CVEFiltersToolbar: React.FC<CVEFiltersToolbarProps> = ({
               dispatch(setFilter({ key: 'isExploited', value: val }));
             }}
             aria-label="Filter by exploited status"
-            className="appearance-none h-8 pl-3 pr-7 text-xs rounded-input border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-card text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-1 focus:ring-primary-blue cursor-pointer"
+            className="appearance-none h-10 pl-3 pr-8 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-card text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-blue/20 focus:border-primary-blue cursor-pointer transition-all"
           >
             {EXPLOITATION_STATES.map((e) => (
               <option key={e.value.toString()} value={e.value.toString()}>
@@ -169,7 +169,7 @@ export const CVEFiltersToolbar: React.FC<CVEFiltersToolbarProps> = ({
               </option>
             ))}
           </select>
-          <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-light-text-muted" aria-hidden="true" />
+          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-light-text-muted" aria-hidden="true" />
         </div>
 
         {/* Vendor */}
@@ -178,7 +178,7 @@ export const CVEFiltersToolbar: React.FC<CVEFiltersToolbarProps> = ({
           value={filters.vendor}
           onChange={handleVendor}
           placeholder="Vendor name..."
-          className="h-8 px-3 text-xs rounded-input border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-card text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-1 focus:ring-primary-blue"
+          className="h-10 px-3 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-card text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-blue/20 focus:border-primary-blue transition-all"
           aria-label="Filter by vendor"
         />
 
@@ -188,7 +188,7 @@ export const CVEFiltersToolbar: React.FC<CVEFiltersToolbarProps> = ({
           value={filters.product}
           onChange={handleProduct}
           placeholder="Product name..."
-          className="h-8 px-3 text-xs rounded-input border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-card text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-1 focus:ring-primary-blue"
+          className="h-10 px-3 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-bg-card text-light-text-primary dark:text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-primary-blue/20 focus:border-primary-blue transition-all"
           aria-label="Filter by product"
         />
       </div>

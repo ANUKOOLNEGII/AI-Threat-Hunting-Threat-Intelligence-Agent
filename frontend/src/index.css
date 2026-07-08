@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Inter', 'Roboto', 'Arial', sans-serif;
+  }
+
+  /* Custom styling for default body */
+  body {
+    @apply transition-colors duration-200;
+  }
+
+  /* Custom selection styles */
+  ::selection {
+    @apply bg-primary-blue/30 text-primary-blue;
+  }
+
+  /* Accessible focus indicators */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary-blue ring-offset-2 dark:ring-offset-dark-bg-primary ring-offset-light-bg-primary;
+  }
+
+  /* Hide scrollbar for layout elements but allow scroll */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Custom scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-light-bg-secondary dark:bg-dark-bg-secondary;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-700 rounded-full hover:bg-gray-400 dark:hover:bg-gray-600;
+  }
+}
+
+@layer components {
+  /* Common hover dynamic designs */
+  .hover-card {
+    @apply transition-all duration-300 hover:shadow-medium hover:-translate-y-0.5;
+  }
+
+  .interactive-element {
+    @apply transition-all duration-200 active:scale-[0.98];
+  }
+}
+
+/* Respect user prefers-reduced-motion configuration */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    background-attachment: initial !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+}

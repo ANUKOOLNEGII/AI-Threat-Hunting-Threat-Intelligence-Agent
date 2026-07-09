@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: threat-intel-celery-worker
+  namespace: threat-intel
+  labels:
+    app: threat-intel-celery-worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: threat-intel-celery-worker
+  template:
+    metadata:
+      labels:
+        app: threat-intel-celery-worker
+    spec:
+      containers:
+      - name: celery-worker
+        image: threat-intel-api:latest
+        imagePullPolicy: Always
+        command: ["celery", "-A", "app.workers.celery_app", "worker", "--loglevel=info", "--concurrency=4"]
+        env:
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: threat-intel-secrets
+              key: secret-key
+        - name: POSTGRES_DSN
+          valueFrom:
+            secretKeyRef:
+              name: threat-intel-secrets
+              key: postgres-dsn
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: threat-intel-secrets
+              key: redis-url
+        - name: CELERY_BROKER_URL
+          valueFrom:
+            secretKeyRef:
+              name: threat-intel-secrets
+              key: celery-broker-url
+        - name: CELERY_RESULT_BACKEND
+          valueFrom:
+            secretKeyRef:
+              name: threat-intel-secrets
+              key: celery-result-backend
+        envFrom:
+        - configMapRef:
+            name: threat-intel-config
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: threat-intel-celery-beat
+  namespace: threat-intel
+  labels:
+    app: threat-intel-celery-beat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: threat-intel-celery-beat
+  template:
+    metadata:
+      labels:
+        app: threat-intel-celery-beat
+    spec:
+      containers:
+      - name: celery-beat
+        image: threat-intel-api:latest
+        imagePullPolicy: Always
+        command: ["celery", "-A", "app.workers.celery_app", "beat", "--loglevel=info"]
+        env:
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: threat-intel-secrets
+              key: secret-key
+        - name: POSTGRES_DSN
+          valueFrom:
+            secretKeyRef:
+              name: threat-intel-secrets
+              key: postgres-dsn
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: threat-intel-secrets
+              key: redis-url
+        - name: CELERY_BROKER_URL
+          valueFrom:
+            secretKeyRef:
+              name: threat-intel-secrets
+              key: celery-broker-url
+        - name: CELERY_RESULT_BACKEND
+          valueFrom:
+            secretKeyRef:
+              name: threat-intel-secrets
+              key: celery-result-backend
+        envFrom:
+        - configMapRef:
+            name: threat-intel-config
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+      restartPolicy: Always

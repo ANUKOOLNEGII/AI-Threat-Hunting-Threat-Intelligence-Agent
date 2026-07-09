@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional, Dict, Any, List
 from enum import Enum
 from datetime import datetime
@@ -37,6 +37,8 @@ class NotificationUpdate(BaseModel):
 
 
 class NotificationResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     user_id: int
     type: NotificationType
@@ -47,9 +49,6 @@ class NotificationResponse(BaseModel):
     is_read: bool
     read_at: Optional[datetime] = None
     created_at: datetime
-
-    class Config:
-        from_attributes = True
 
 
 class NotificationListResponse(BaseModel):
@@ -74,10 +73,9 @@ class NotificationPreferenceUpdate(NotificationPreferenceBase):
 
 
 class NotificationPreferenceResponse(NotificationPreferenceBase):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     user_id: int
     created_at: datetime
     updated_at: datetime
-
-    class Config:
-        from_attributes = True

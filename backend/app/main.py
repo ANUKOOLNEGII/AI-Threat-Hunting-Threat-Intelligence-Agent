@@ -21,6 +21,7 @@ from app.database.session import get_session, init_db
 from app.feeds.routes import feeds_router, scheduler_router
 from app.middleware.request_id import RequestIDMiddleware
 from app.middleware.security import SecurityHeadersMiddleware
+from app.middleware.rate_limit import setup_rate_limiting
 from app.reporting.routes import router as reporting_router
 from app.notifications.routes import router as notifications_router
 from app.websockets.routes import router as websocket_router
@@ -54,6 +55,7 @@ def create_app() -> FastAPI:
     )
 
     register_exception_handlers(app)
+    setup_rate_limiting(app)
     app.add_middleware(RequestIDMiddleware)
     app.add_middleware(SecurityHeadersMiddleware)
     app.add_middleware(

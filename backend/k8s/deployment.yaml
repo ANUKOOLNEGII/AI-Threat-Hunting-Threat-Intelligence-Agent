@@ -1,0 +1,111 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: threat-intel-api
+  namespace: threat-intel
+  labels:
+    app: threat-intel-api
+    version: v1
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: threat-intel-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: threat-intel-api
+        version: v1
+    spec:
+      # Pod anti-affinity for high availability across nodes
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - threat-intel-api
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: api
+        image: threat-intel-api:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+        env:
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: threat-intel-secrets
+              key: secret-key
+        - name: POSTGRES_DSN
+          valueFrom:
+            secretKeyRef:
+              name: threat-intel-secrets
+              key: postgres-dsn
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: threat-intel-secrets
+              key: redis-url
+        - name: MONGODB_DSN
+          valueFrom:
+            secretKeyRef:
+              name: threat-intel-secrets
+              key: mongodb-dsn
+        - name: CELERY_BROKER_URL
+          valueFrom:
+            secretKeyRef:
+              name: threat-intel-secrets
+              key: celery-broker-url
+        - name: CELERY_RESULT_BACKEND
+          valueFrom:
+            secretKeyRef:
+              name: threat-intel-secrets
+              key: celery-result-backend
+        envFrom:
+        - configMapRef:
+            name: threat-intel-config
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 0
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 12
+      restartPolicy: Always

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 
@@ -12,6 +12,8 @@ class UserUpdate(BaseModel):
 
 
 class UserResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     email: str
     first_name: Optional[str] = None
@@ -22,9 +24,6 @@ class UserResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
-
 
 class UserListResponse(BaseModel):
     items: List[UserResponse]
@@ -34,6 +33,8 @@ class UserListResponse(BaseModel):
 
 
 class AuditLogResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     user_id: Optional[int] = None
     action: str
@@ -43,9 +44,6 @@ class AuditLogResponse(BaseModel):
     ip_address: Optional[str] = None
     user_agent: Optional[str] = None
     created_at: datetime
-
-    class Config:
-        from_attributes = True
 
 
 class AuditLogListResponse(BaseModel):
@@ -62,12 +60,11 @@ class SystemConfigUpdate(BaseModel):
 
 
 class SystemConfigResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     key: str
     value: str
     description: Optional[str] = None
     created_at: datetime
     updated_at: datetime
-
-    class Config:
-        from_attributes = True

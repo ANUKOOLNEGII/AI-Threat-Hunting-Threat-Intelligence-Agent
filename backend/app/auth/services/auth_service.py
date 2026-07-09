@@ -36,7 +36,7 @@ class AuthService:
             "role": user.role,
             "exp": int((datetime.now(timezone.utc) + timedelta(minutes=30)).timestamp()),
         }
-        return jwt.encode(payload, self.settings.secret_key or "dev-secret", algorithm="HS256")
+        return jwt.encode(payload, self.settings.secret_key, algorithm="HS256")
 
     def _create_refresh_token(self) -> str:
         return secrets.token_urlsafe(32)

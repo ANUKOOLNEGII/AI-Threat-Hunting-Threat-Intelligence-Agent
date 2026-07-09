@@ -16,7 +16,16 @@ class DashboardCache:
         self._memory: dict[str, tuple[float, Any]] = {}
         self._redis: Optional[redis.Redis] = None
         if self.settings.redis_url:
-            self._redis = redis.from_url(self.settings.redis_url, decode_responses=True)
+            # Configure Redis connection pooling for performance
+            self._redis = redis.from_url(
+                self.settings.redis_url,
+                decode_responses=True,
+                max_connections=50,
+                socket_connect_timeout=5,
+                socket_timeout=5,
+                retry_on_timeout=True,
+                health_check_interval=30,
+            )
 
     async def get(self, key: str) -> Optional[Any]:
         cache_key = f"dashboard:{key}"

@@ -23,7 +23,7 @@ async def get_current_user_ws(
 ) -> User:
     settings = get_settings()
     try:
-        payload = jwt.decode(token, settings.secret_key or "dev-secret", algorithms=["HS256"])
+        payload = jwt.decode(token, settings.secret_key, algorithms=["HS256"])
     except jwt.ExpiredSignatureError:
         raise Exception("Token expired")
     except jwt.InvalidTokenError:
@@ -50,7 +50,7 @@ async def get_current_user(
 
     settings = get_settings()
     try:
-        payload = jwt.decode(credentials.credentials, settings.secret_key or "dev-secret", algorithms=["HS256"])
+        payload = jwt.decode(credentials.credentials, settings.secret_key, algorithms=["HS256"])
     except jwt.ExpiredSignatureError as exc:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired") from exc
     except jwt.InvalidTokenError as exc:

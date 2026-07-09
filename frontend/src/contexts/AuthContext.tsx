@@ -34,24 +34,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (storedToken && storedUser) {
           const parsedUser = JSON.parse(storedUser) as User;
           
+          // Set token and user immediately to avoid blocking
+          setToken(storedToken);
+          setUser(parsedUser);
+          dispatch(setCredentials({ token: storedToken, user: parsedUser }));
+          
           // In real production we might validate or refresh token on startup
           if (rememberMe && storedRefresh) {
             try {
               const res = await authService.refreshToken(storedRefresh);
               localStorage.setItem('token', res.token);
               setToken(res.token);
-              setUser(parsedUser);
               dispatch(setCredentials({ token: res.token, user: parsedUser }));
             } catch {
               // Refresh failed, logout
               localStorage.removeItem('token');
               localStorage.removeItem('user');
               localStorage.removeItem('refreshToken');
+              setToken(null);
+              setUser(null);
+              dispatch(logoutAction());
             }
-          } else {
-            setToken(storedToken);
-            setUser(parsedUser);
-            dispatch(setCredentials({ token: storedToken, user: parsedUser }));
           }
         }
       } catch (err) {

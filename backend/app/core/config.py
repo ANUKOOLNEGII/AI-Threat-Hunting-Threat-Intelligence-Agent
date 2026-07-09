@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import secrets
 from functools import lru_cache
 from typing import Optional
 
@@ -15,8 +16,8 @@ class Settings(BaseSettings):
     environment: str = Field(default="development")
     debug: bool = Field(default=False)
     api_v1_prefix: str = Field(default="/api/v1")
-    secret_key: str = Field(default="dev-secret")
-    cors_origins: str = Field(default="*")
+    secret_key: str = Field(default="")
+    cors_origins: str = Field(default="http://localhost:3000,http://localhost:5173")
     request_id_header: str = Field(default="X-Request-ID")
     log_level: str = Field(default="INFO")
 
@@ -60,6 +61,16 @@ class Settings(BaseSettings):
         if isinstance(value, str):
             return value.strip().lower() in {"1", "true", "yes", "on", "debug", "development"}
         return bool(value)
+
+    @field_validator("secret_key", mode="before")
+    @classmethod
+    def validate_secret_key(cls, value: object) -> str:
+        """Generate a secure secret key if not provided in production."""
+        if isinstance(value, str) and value:
+            return value
+        # Generate a secure random key for development
+        # In production, this MUST be set via environment variable
+        return secrets.token_urlsafe(32)
 
     @property
     def cors_allow_origins(self) -> list[str]:

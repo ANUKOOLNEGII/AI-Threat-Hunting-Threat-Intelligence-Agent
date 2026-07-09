@@ -16,25 +16,46 @@ from app.notifications.models import Base as NotificationsBase
 
 settings = get_settings()
 
+# Configure connection pooling for production performance
 engine = create_async_engine(
     settings.postgres_dsn or "sqlite+aiosqlite:///./app.db",
     echo=False,
+    pool_size=20,  # Increased connection pool size
+    max_overflow=40,  # Allow additional connections during peak load
+    pool_pre_ping=True,  # Verify connections before use
+    pool_recycle=3600,  # Recycle connections after 1 hour
+    connect_args={
+        "connect_timeout": 10,
+        "command_timeout": 30,
+    } if settings.postgres_dsn else {},
 )
 
-SessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False)
+SessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False, class_=AsyncSession)
+
+_db_initialized = False
 
 
 async def init_db() -> None:
+    """Initialize database. In production, use Alembic migrations instead."""
+    global _db_initialized
+    if _db_initialized:
+        return
+    
+    # For development, create tables if they don't exist
+    # In production, run: alembic upgrade head
     async with engine.begin() as conn:
-        await conn.run_sync(UserBase.metadata.create_all)
-        await conn.run_sync(RefreshTokenBase.metadata.create_all)
-        await conn.run_sync(AuditLogBase.metadata.create_all)
-        await conn.run_sync(ThreatIntelBase.metadata.create_all)
-        await conn.run_sync(ReportingBase.metadata.create_all)
-        await conn.run_sync(NotificationsBase.metadata.create_all)
+        # Check if tables exist, if not create them (dev mode)
+        # Production should use Alembic migrations
+        await conn.run_sync(UserBase.metadata.create_all, checkfirst=True)
+        await conn.run_sync(RefreshTokenBase.metadata.create_all, checkfirst=True)
+        await conn.run_sync(AuditLogBase.metadata.create_all, checkfirst=True)
+        await conn.run_sync(ThreatIntelBase.metadata.create_all, checkfirst=True)
+        await conn.run_sync(ReportingBase.metadata.create_all, checkfirst=True)
+        await conn.run_sync(NotificationsBase.metadata.create_all, checkfirst=True)
+    
+    _db_initialized = True
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
-    await init_db()
     async with SessionLocal() as session:
         yield session

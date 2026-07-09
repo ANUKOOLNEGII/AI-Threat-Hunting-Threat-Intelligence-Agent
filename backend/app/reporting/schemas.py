@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional, Dict, Any, List
 from enum import Enum
 from datetime import datetime
@@ -48,6 +48,8 @@ class ReportUpdate(BaseModel):
 
 
 class ReportResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     title: str
     type: ReportType
@@ -67,9 +69,6 @@ class ReportResponse(BaseModel):
     schedule_id: Optional[int] = None
     created_at: datetime
     updated_at: datetime
-
-    class Config:
-        from_attributes = True
 
 
 class ReportListResponse(BaseModel):

@@ -8,6 +8,7 @@ from sqlalchemy import (
     JSON,
     Boolean,
     ForeignKey,
+    Index,
 )
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
@@ -34,17 +35,22 @@ class NotificationPriority(str, Enum):
 
 class Notification(Base):
     __tablename__ = "notifications"
+    __table_args__ = (
+        Index("ix_notifications_user_read", "user_id", "is_read"),
+        Index("ix_notifications_user_created", "user_id", "created_at"),
+        Index("ix_notifications_type_priority", "type", "priority"),
+    )
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
-    type = Column(SQLEnum(NotificationType), nullable=False)
-    priority = Column(SQLEnum(NotificationPriority), default=NotificationPriority.MEDIUM, nullable=False)
+    type = Column(SQLEnum(NotificationType), nullable=False, index=True)
+    priority = Column(SQLEnum(NotificationPriority), default=NotificationPriority.MEDIUM, nullable=False, index=True)
     title = Column(String(255), nullable=False)
     message = Column(Text, nullable=False)
     notification_metadata = Column(JSON, nullable=True)
     is_read = Column(Boolean, default=False, nullable=False, index=True)
     read_at = Column(DateTime(timezone=True), nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
 
     user = relationship("User", foreign_keys=[user_id])
 

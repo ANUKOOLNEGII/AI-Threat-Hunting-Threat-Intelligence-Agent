@@ -11,6 +11,8 @@ from app.ai.models import AIConversation
 from app.core.config import get_settings
 from app.feeds.models import ThreatFeed
 from app.threat_intel.models import Base as ThreatIntelBase
+from app.reporting.models import Base as ReportingBase
+from app.notifications.models import Base as NotificationsBase
 
 settings = get_settings()
 
@@ -28,6 +30,8 @@ async def init_db() -> None:
         await conn.run_sync(RefreshTokenBase.metadata.create_all)
         await conn.run_sync(AuditLogBase.metadata.create_all)
         await conn.run_sync(ThreatIntelBase.metadata.create_all)
+        await conn.run_sync(ReportingBase.metadata.create_all)
+        await conn.run_sync(NotificationsBase.metadata.create_all)
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:

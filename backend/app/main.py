@@ -21,6 +21,11 @@ from app.database.session import get_session, init_db
 from app.feeds.routes import feeds_router, scheduler_router
 from app.middleware.request_id import RequestIDMiddleware
 from app.middleware.security import SecurityHeadersMiddleware
+from app.reporting.routes import router as reporting_router
+from app.notifications.routes import router as notifications_router
+from app.websockets.routes import router as websocket_router
+from app.admin.routes import router as admin_router
+from app.monitoring.routes import router as monitoring_router
 from app.threat_intel.routes import cves_router, dashboard_router, iocs_router, threats_router
 
 logger = get_logger(__name__)
@@ -73,6 +78,16 @@ def create_app() -> FastAPI:
         app.include_router(router, prefix="/api/v1")
     app.include_router(ai_router)
     app.include_router(ai_router, prefix="/api/v1")
+    app.include_router(reporting_router)
+    app.include_router(reporting_router, prefix="/api/v1")
+    app.include_router(notifications_router)
+    app.include_router(notifications_router, prefix="/api/v1")
+    app.include_router(websocket_router)
+    app.include_router(websocket_router, prefix="/api/v1")
+    app.include_router(admin_router)
+    app.include_router(admin_router, prefix="/api/v1")
+    app.include_router(monitoring_router)
+    app.include_router(monitoring_router, prefix="/api/v1")
 
     @app.get("/")
     async def home() -> dict[str, str]:

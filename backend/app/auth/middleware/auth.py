@@ -17,6 +17,29 @@ security = HTTPBearer(auto_error=False)
 _rate_limits: dict[str, list[float]] = {}
 
 
+async def get_current_user_ws(
+    token: str,
+    session: AsyncSession,
+) -> User:
+    settings = get_settings()
+    try:
+        payload = jwt.decode(token, settings.secret_key or "dev-secret", algorithms=["HS256"])
+    except jwt.ExpiredSignatureError:
+        raise Exception("Token expired")
+    except jwt.InvalidTokenError:
+        raise Exception("Invalid token")
+
+    user_id = payload.get("sub")
+    if not user_id:
+        raise Exception("Invalid token payload")
+
+    repo = UserRepository(session)
+    user = await repo.get_by_id(user_id)
+    if not user or not user.is_active or user.is_deleted:
+        raise Exception("User inactive")
+    return user
+
+
 async def get_current_user(
     request: Request,
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),

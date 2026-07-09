@@ -1,0 +1,60 @@
+from __future__ import annotations
+
+import json
+import time
+from typing import Any, Optional
+
+import redis.asyncio as redis
+
+from app.core.config import get_settings
+
+
+class DashboardCache:
+    def __init__(self) -> None:
+        self.settings = get_settings()
+        self.ttl = self.settings.dashboard_cache_ttl_seconds
+        self._memory: dict[str, tuple[float, Any]] = {}
+        self._redis: Optional[redis.Redis] = None
+        if self.settings.redis_url:
+            self._redis = redis.from_url(self.settings.redis_url, decode_responses=True)
+
+    async def get(self, key: str) -> Optional[Any]:
+        cache_key = f"dashboard:{key}"
+        if self._redis:
+            try:
+                value = await self._redis.get(cache_key)
+                return json.loads(value) if value else None
+            except Exception:
+                pass
+        item = self._memory.get(cache_key)
+        if not item:
+            return None
+        expires_at, value = item
+        if expires_at < time.time():
+            self._memory.pop(cache_key, None)
+            return None
+        return value
+
+    async def set(self, key: str, value: Any) -> None:
+        cache_key = f"dashboard:{key}"
+        if self._redis:
+            try:
+                await self._redis.setex(cache_key, self.ttl, json.dumps(value, default=str))
+                return
+            except Exception:
+                pass
+        self._memory[cache_key] = (time.time() + self.ttl, value)
+
+    async def clear(self) -> None:
+        if self._redis:
+            try:
+                keys = await self._redis.keys("dashboard:*")
+                if keys:
+                    await self._redis.delete(*keys)
+                return
+            except Exception:
+                pass
+        self._memory.clear()
+
+
+dashboard_cache = DashboardCache()

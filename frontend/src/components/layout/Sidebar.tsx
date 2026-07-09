@@ -96,22 +96,39 @@ export const Sidebar: React.FC = () => {
           ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
       >
-        {/* ─── Brand / Logo Area ─────────────────────────────────────── */}
-        <div
+        {/* ─── Brand / Logo Area (clickable — navigates to Dashboard) ── */}
+        <NavLink
+          to="/dashboard"
+          aria-label="Go to Dashboard"
+          onClick={() => {
+            if (mobileMenuOpen) dispatch(toggleMobileMenu());
+          }}
+          onKeyDown={(event) => {
+            if (event.key === ' ') {
+              event.preventDefault();
+              event.currentTarget.click();
+            }
+          }}
           className="
-            flex flex-none min-h-[72px] sm:min-h-[80px] items-center border-b
+            flex flex-none min-h-[72px] sm:min-h-[80px] items-center justify-start border-b
             border-gray-200 dark:border-gray-800
             bg-white/95 dark:bg-dark-bg-secondary/95 backdrop-blur-xl
-            px-4 justify-between
+            px-6 gap-3
+            cursor-pointer
+            hover:bg-primary-blue/5 dark:hover:bg-primary-sky/5
+            focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-blue/50
+            transition-colors duration-200
+            no-underline
           "
         >
-          <div className="flex items-center gap-3 min-w-0">
-            <ShieldIcon className="h-6 w-6 text-primary-blue dark:text-primary-sky flex-none" />
-            <span className="font-sans text-[15px] font-bold tracking-widest text-primary-blue dark:text-primary-sky whitespace-nowrap select-none">
-              AEGIS MONITOR
-            </span>
-          </div>
-        </div>
+          <ShieldIcon
+            aria-hidden="true"
+            className="h-6 w-6 shrink-0 text-primary-blue dark:text-primary-sky"
+          />
+          <span className="select-none whitespace-nowrap font-sans text-[15px] font-bold leading-none tracking-widest text-primary-blue dark:text-primary-sky">
+            AEGIS MONITOR
+          </span>
+        </NavLink>
 
         {/* ─── Navigation Menu List ───────────────────────────────────── */}
         <nav
